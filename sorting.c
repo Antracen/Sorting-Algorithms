@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 /*
- * Quicksort written by Martin Wass.
- *
+ * Sortin algorithms written by Martin Wass.
+ * Choose algorithm by running program as such: "./a.out -alg quicksort"
  */
 
 // Print a representation of an array.
@@ -50,24 +51,64 @@ void quicksort(int* array, int from, int to){
 	quicksort(array, i+2, to);
 }
 
-// Create and sort list while printing info to user.
-int main(){
+void printHelp(){
+	printf("TO USE PROGRAM SUPPLY FLAG -alg to specify algorithm. Example: ./a.out -alg quicksort");
+}
+
+void randomList(int* list, int size){
 	srand(time(NULL)); // Initialize random number generator.
-	int listSize = 30;
-	int list[listSize];
 	// Fill array with random numbers 0-9.
-	for(int i = 0; i < listSize; i++){
+	for(int i = 0; i < size; i++){
 		list[i] = rand()%10;
 	}
+}
+
+// Create and sort list while printing info to user.
+int main(int argc, char** argv){
+	// User entered flag.
+	int i = 1;
+	int alg = 0;
+	if(argc < 2){
+		printHelp();
+		return 0;
+	}
+	while(i < argc){
+		// Choose algorithm
+		if(strcmp(argv[i], "-alg") == 0){
+			i++;
+			if(strcmp(argv[i], "quicksort") == 0){
+				alg = 0;
+			} else{
+				printf("UNKNOWN ALGORITHM %s\n", argv[i]);
+				return 0;
+			}
+		}
+		// Get help message
+		else if(strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0){
+			printHelp();
+			return 0;
+		}
+		// Unknown flag.
+		else{
+			printf("UNKNOWN FLAG %s\n", argv[i]);
+			return 0;
+		}
+		i++;
+	}
+
+	int listSize = 30;
+	int list[listSize];
+	randomList(list, listSize);
 
 	printf("UNSORTED ARRAY: ");
 	printArray(list, listSize);
 
 	// Sort array.
-	quicksort(list, 0, listSize);
-
-	printf("ARRAY AFTER QUICKSORT: ");
-	printArray(list, listSize);
+	if(alg == 0){
+		quicksort(list, 0, listSize);
+		printf("ARRAY AFTER QUICKSORT: ");
+		printArray(list, listSize);
+	}
 
 	return 0;
 }
